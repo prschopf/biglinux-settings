@@ -436,17 +436,19 @@ class BaseSettingsPage(Adw.Bin):
                     )
                 )
                 self.main_window.show_toast(_("Failed to change setting: {}").format(script_name))
+                # Refresh all switches to reflect real state
+                self.sync_all_switches()
+                return True
             else:
                 # If this switch is a parent, adjust visibility of its sub‑switches
                 if switch in self.sub_switches:
                     for child_row in self.sub_switches[switch]:
                         is_supported = not getattr(child_row, "_hidden_no_support", False)
                         child_row.set_visible(state and is_supported)
+                # Refresh all switches to reflect real state
+                self.sync_all_switches()
 
-            # Refresh all switches to reflect real state
-            self.sync_all_switches()
-
-        return True
+        return False
 
     def filter_rows(self, search_text, hide_group_headers=False):
         """Filter rows based on search text. Returns True if any rows are visible."""
